@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class AccountController extends Controller
 {
@@ -14,10 +15,8 @@ class AccountController extends Controller
     {
         $accounts = Account::all();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Account Fetched Successfully',
-            'data' => $accounts,
+        return Inertia::render('accounts/index', [
+            'accounts' => $accounts,
         ]);
     }
 
