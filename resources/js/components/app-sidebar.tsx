@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, Ruler, Wallet } from 'lucide-react';
+import { BookOpen, FolderGit2, FolderTree, LayoutGrid, Ruler, Wallet } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as Account } from '@/routes/accounts';
+import { index as Category } from '@/routes/product-categories';
 import { index as Unit } from '@/routes/unit';
 import type { NavItem } from '@/types';
 
@@ -33,6 +34,11 @@ const mainNavItems: NavItem[] = [
         title: 'Units',
         href: Unit(),
         icon: Ruler,
+    },
+    {
+        title: 'Categories',
+        href: Category(),
+        icon: FolderTree,
     },
 ];
 
