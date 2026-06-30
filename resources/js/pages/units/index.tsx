@@ -133,19 +133,19 @@ export default function Units() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="px-6 py-4">Name</TableHead>
-                                <TableHead className="px-6 py-4">Short Name</TableHead>
-                                <TableHead className="px-6 py-4">Status</TableHead>
-                                <TableHead className="px-6 py-4 text-right">Actions</TableHead>
+                                <TableHead className='p-3'>Name</TableHead>
+                                <TableHead className='p-3'>Short Name</TableHead>
+                                <TableHead className='p-3'>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {units.data.length > 0 ? (
                                 units.data.map((unit) => (
-                                    <TableRow key={unit.id} className="hover:bg-muted/30 transition-colors">
-                                        <TableCell className="px-6 py-4 font-medium">{unit.name}</TableCell>
-                                        <TableCell className="px-6 py-4 text-muted-foreground">{unit.short_name}</TableCell>
-                                        <TableCell className="px-6 py-4">
+                                    <TableRow key={unit.id} className="hover:bg-muted/30">
+                                        <TableCell>{unit.name}</TableCell>
+                                        <TableCell>{unit.short_name}</TableCell>
+                                        <TableCell>
                                             <Badge
                                                 variant="outline"
                                                 className={cn(
@@ -158,7 +158,7 @@ export default function Units() {
                                                 {unit.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="px-6 py-4 text-right">
+                                        <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
                                                 <Button
                                                     variant="ghost"
