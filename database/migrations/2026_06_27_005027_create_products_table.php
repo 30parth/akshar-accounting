@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('name_slug');                   // Product / Item code
             $table->string('hsn_code')->nullable();             // HSN code for GST
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->decimal('opening_stock', 12, 3)->default(0);   // Stock qty at start
             $table->decimal('current_stock', 12, 3)->default(0);   // Live stock qty
             $table->decimal('min_stock_level', 12, 3)->default(0); // Alert below this
+            $table->string('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

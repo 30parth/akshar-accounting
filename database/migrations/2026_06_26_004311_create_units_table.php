@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('short_name');
-            $table->string('status');
+            $table->string('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });
