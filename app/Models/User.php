@@ -47,4 +47,19 @@ class User extends Authenticatable implements PasskeyUser
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(ProductCategory::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
