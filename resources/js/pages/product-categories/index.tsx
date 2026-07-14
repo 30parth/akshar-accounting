@@ -1,8 +1,9 @@
-import { Head, usePage, router, Link } from '@inertiajs/react';
-import { Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { Form, Head, usePage, router } from '@inertiajs/react';
+import { Plus, Pencil, Trash2, Search, Loader2 } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import ProductCategoryController from '@/actions/App/Http/Controllers/ProductCategoryController';
 import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
 import { Pagination } from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import {
     DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
     Table,
     TableBody,
@@ -24,7 +26,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
-import { index as CategoryIndex, create as CreateCategory, edit as EditCategory } from '@/routes/product-categories';
+import { index as CategoryIndex } from '@/routes/product-categories';
 
 interface Category {
     id: number;
@@ -54,6 +56,8 @@ export default function ProductCategories() {
     const { props } = usePage<Props>();
     const { categories, filters } = props;
 
+    const [isOpen, setIsOpen] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
     const [search, setSearch] = useState(filters.search ?? '');
 
@@ -76,6 +80,16 @@ export default function ProductCategories() {
         return () => clearTimeout(timer);
     }, [search, filters.search]);
 
+    const openCreateModal = () => {
+        setEditingCategory(null);
+        setIsOpen(true);
+    };
+
+    const openEditModal = (category: Category) => {
+        setEditingCategory(category);
+        setIsOpen(true);
+    };
+
     return (
         <>
             <Head title="Product Categories" />
@@ -87,11 +101,12 @@ export default function ProductCategories() {
                         description="Manage categories for your product catalog."
                     />
                     
-                    <Button asChild className="w-full sm:w-auto flex items-center justify-center gap-2 cursor-pointer">
-                        <Link href={CreateCategory().url}>
-                            <Plus className="h-4 w-4" />
-                            Create Category
-                        </Link>
+                    <Button
+                        onClick={openCreateModal}
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                        <Plus className="h-4 w-4" />
+                        Create Category
                     </Button>
                 </div>
 
@@ -142,15 +157,13 @@ export default function ProductCategories() {
                                         <TableCell className="px-6 py-4 text-right">
                                             <div className="flex justify-end gap-2">
                                                 <Button
-                                                    asChild
                                                     variant="ghost"
                                                     size="icon"
+                                                    onClick={() => openEditModal(category)}
                                                     className="h-8 w-8 hover:text-foreground cursor-pointer text-muted-foreground"
                                                 >
-                                                    <Link href={EditCategory(category.id).url}>
-                                                        <Pencil className="h-4 w-4" />
-                                                        <span className="sr-only">Edit</span>
-                                                    </Link>
+                                                    <Pencil className="h-4 w-4" />
+                                                    <span className="sr-only">Edit</span>
                                                 </Button>
                                                 <Button
                                                     variant="ghost"
@@ -219,6 +232,81 @@ export default function ProductCategories() {
                             Delete
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Create/Edit Modal Dialog */}
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>{editingCategory ? 'Edit Category' : 'Create Category'}</DialogTitle>
+                        <DialogDescription>
+                            {editingCategory
+                                ? 'Update the details for this category.'
+                                : 'Add a new product category.'}
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <Form
+                        {...(editingCategory
+                            ? ProductCategoryController.update.form({ product_category: editingCategory.id })
+                            : ProductCategoryController.store.form()
+                        )}
+                        onSuccess={() => setIsOpen(false)}
+                        options={{
+                            preserveScroll: true,
+                        }}
+                        key={editingCategory?.id ?? 'create'}
+                        className="space-y-4 py-2"
+                    >
+                        {({ processing, errors }) => (
+                            <>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name">Category Name</Label>
+                                    <Input
+                                        id="name"
+                                        name="name"
+                                        defaultValue={editingCategory?.name ?? ''}
+                                        placeholder="e.g. Electronics, Groceries, Apparel"
+                                        required
+                                        autoFocus
+                                    />
+                                    <InputError message={errors.name} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="status">Status</Label>
+                                    <select
+                                        id="status"
+                                        name="status"
+                                        className="border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] mt-1 block w-full dark:bg-neutral-900"
+                                        defaultValue={editingCategory?.status ?? 'Active'}
+                                        required
+                                    >
+                                        <option value="Active" className="dark:bg-neutral-900">Active</option>
+                                        <option value="Inactive" className="dark:bg-neutral-900">Inactive</option>
+                                    </select>
+                                    <InputError message={errors.status} />
+                                </div>
+
+                                <DialogFooter className="gap-2 pt-4">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setIsOpen(false)}
+                                        disabled={processing}
+                                        className="cursor-pointer"
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" disabled={processing} className="cursor-pointer">
+                                        {processing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Save
+                                    </Button>
+                                </DialogFooter>
+                            </>
+                        )}
+                    </Form>
                 </DialogContent>
             </Dialog>
         </>

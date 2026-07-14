@@ -36,9 +36,9 @@ class ProductCategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('product-categories/create');
+        // Not used as we are using a modal form on index
     }
 
     /**
@@ -60,7 +60,7 @@ class ProductCategoryController extends Controller
             'message' => __('Category created successfully.'),
         ]);
 
-        return redirect()->route('product-categories.index');
+        return redirect()->back();
     }
 
     /**
@@ -74,11 +74,9 @@ class ProductCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductCategory $productCategory): Response
+    public function edit(ProductCategory $productCategory)
     {
-        return Inertia::render('product-categories/edit', [
-            'category' => $productCategory,
-        ]);
+        // Not used as we are using a modal form on index
     }
 
     /**
@@ -100,7 +98,7 @@ class ProductCategoryController extends Controller
             'message' => __('Category updated successfully.'),
         ]);
 
-        return redirect()->route('product-categories.index');
+        return redirect()->back();
     }
 
     /**
